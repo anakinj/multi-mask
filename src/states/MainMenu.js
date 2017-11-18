@@ -1,9 +1,9 @@
 class MainMenu extends Phaser.State {
-	create() {
+  create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.stage.backgroundColor = '#000000';
-    this.game.state.start("Level");
-	}
+    this.game.state.start('Level');
+  }
 }
 
 export default MainMenu;

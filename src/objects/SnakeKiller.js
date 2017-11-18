@@ -1,61 +1,46 @@
 import Snake from './Snake';
 
 class SnakeKiller extends Snake {
-    constructor(game) {
-        super(game);
-        this.sprite = this.game.add.sprite(this.game.world.centerX+100, this.game.world.centerY+100, 'snake_01');
-        this.sprite.enableBody = true;
-		this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
-        this.sprite.body.collideWorldBounds = true;
-		this.speed = 5;
+  constructor(game, snake) {
+    super(game);
+    this.sprite = this.game.add.sprite(this.game.world.randomX, this.game.world.randomY, 'snake_01');
+    this.sprite.enableBody = true;
+    this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+    this.sprite.body.collideWorldBounds = true;
+    this.speed = 4.7;
+    this.snake = snake;
+  }
+
+  update() {
+    this.move();
+    this.updateDirection();
+  }
+
+  angleToHero() {
+    return Phaser.Point.angle(new Phaser.Point(this.x, this.y), new Phaser.Point(this.snake.x, this.snake.y));
+  }
+
+  updateDirection() {
+    const angleToHero = this.angleToHero();
+
+    if (this.prevAngleToHero && Math.abs(this.prevAngleToHero - angleToHero) < 0.1) {
+      return;
     }
 
-	update() {
-        this.move();
-        this.updateDirection();
-    }
-    
-    getRandomIntInclusive(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    this.prevAngleToHero = angleToHero;
 
-    updateDirection() {
-        if(this.getRandomIntInclusive(1, 4) != 4) {
-            return
-        };
-
-        if ( this.getRandomIntInclusive(1, 4) == 1) {
-            this.direction = 'NORTH';
-        }
-        else if ( this.getRandomIntInclusive(1, 4) == 2) {
-            this.direction = 'SOUTH';
-        }
-        else if ( this.getRandomIntInclusive(1, 4) == 3) {
-            this.direction = 'WEST';
-        }
-        else if ( this.getRandomIntInclusive(1, 4) == 4) {
-            this.direction = 'EAST';
-        }
+    if (this.game.rnd.integer() % 2 == 0) {
+      if (angleToHero > 0) {
+        this.direction = 'NORTH';
+      } else {
+        this.direction = 'SOUTH';
+      }
+    } else if (Math.abs(angleToHero) > Math.PI / 2) {
+      this.direction = 'EAST';
+    } else {
+      this.direction = 'WEST';
     }
-
-    move() {
-        switch (this.direction) {
-            case 'NORTH':
-                this.sprite.y -= 1 * this.speed;
-                break;
-            case 'EAST':
-                this.sprite.x += 1 * this.speed;
-                break;
-            case 'SOUTH':
-                this.sprite.y += 1 * this.speed;
-                break;
-            case 'WEST':
-                this.sprite.x -= 1 * this.speed;
-                break;
-        }
-    }
+  }
 }
 
 export default SnakeKiller;
